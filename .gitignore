@@ -1,0 +1,6 @@
+
+# Streamlit config
+.streamlit/
+
+# Secrets
+secrets.toml
