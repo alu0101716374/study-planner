@@ -1,13 +1,9 @@
 import streamlit as st
-from lib.auth import get_user, init_session, restore_session
+from lib.auth import get_user
 from lib.ui import render_sidebar
 
 
 def main():
-    init_session()
-    restore_session()
-    user = get_user()
- 
     render_sidebar()
     st.title("AI Study Planner")
 

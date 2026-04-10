@@ -1,6 +1,5 @@
 import streamlit as st
 from lib.auth import get_profile
-from lib.supabase_client import supabase
 from lib.ui import render_sidebar
 
 def main():

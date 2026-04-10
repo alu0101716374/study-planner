@@ -1,6 +1,11 @@
-
-# Streamlit config
-.streamlit/
-
-# Secrets
-secrets.toml__pycache__/
+.secrets/
+__pycache__/
+*.py[cod]
+*.so
+logs/
+secrets.toml
+.pytest_cache/
+.mypy_cache/
+venv/
+env/
+.venv/
