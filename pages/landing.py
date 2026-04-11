@@ -1,13 +1,13 @@
 import streamlit as st
 from lib.auth import get_user
-from lib.ui import render_sidebar
+from lib.ui import handle_result, render_sidebar
 
 
 def main():
     render_sidebar()
     st.title("AI Study Planner")
 
-    user = get_user()
+    user = handle_result(get_user())
 
     col1, col2 = st.columns([2, 1])
 

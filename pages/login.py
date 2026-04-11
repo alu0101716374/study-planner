@@ -1,43 +1,36 @@
 import streamlit as st
 from lib.auth import get_user, sign_in, sign_in_with_google, sign_up
-from lib.ui import render_sidebar
+from lib.ui import render_sidebar, handle_result
 
 
 def sign_up_ui():
     """
-        shows ui for signing up and handles manual user sign up
+    shows ui for signing up and handles manual user sign up
     """
     email = st.text_input(label="Email", key="SignUpEmailInput")
     username = st.text_input(label="Display Name", key="SignUpUsernameInput")
     password = st.text_input(label="Password", type="password", key="SignUpPasswordInput")
 
     if st.button("Sign Up"):
-        success, error = sign_up(email, password, username)
-        if success:
-            st.rerun()
-        else:
-            st.error(error)
+        handle_result(sign_up(email, password, username), display_success=True)
 
 
 def sign_in_ui():
     """
-        shows ui for user sign in and handles manual sign in
+    shows ui for user sign in and handles manual sign in
     """
     email = st.text_input(label="Email", key="LogInEmailInput")
     password = st.text_input(label="Password", type="password", key="LogInPasswordInput")
 
     if st.button("Sign In"):
-        success, error = sign_in(email, password)
-        if success:
-            st.rerun()
-        else:
-            st.error(error)
+        handle_result(sign_in(email, password), display_success=True)
+
 
 def main():
     render_sidebar()
     st.title("Login")
 
-    user = get_user()
+    user = handle_result(get_user())
 
     if not user:
         if st.button("Continue with Google"):
@@ -51,6 +44,7 @@ def main():
         st.caption("If you signed up with Google, use Google login")
     else:
         st.success("Already logged in")
+
 
 if __name__ == "__main__":
     main()

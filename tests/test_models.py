@@ -133,7 +133,7 @@ class TestStudySession:
             title="Study",
             subject="Math",
             hours=10.0,
-            deadline=None,  # Invalid
+            deadline=None,  # Invalidj
             difficulty=2,
             completed_percent=30
         )

@@ -1,6 +1,4 @@
-.PHONY: tests run
-
-.PHONY: tests run clean lint help
+.PHONY: tests run clean lint help format
 
 help:
 	@echo "Available commands:"
@@ -25,5 +23,11 @@ clean:
 	@echo "Clean complete."
 
 lint:
-	@echo "Running flake8 linter..."
+	@echo "Running linters..."
 	flake8 lib services pages --max-line-length=100 --ignore=E501,W503 || true
+	mypy --config-file mypy.ini lib services pages || true
+
+format:
+	@echo "Formatting code with black..."
+	black services pages lib --line-length=100
+

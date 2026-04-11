@@ -10,20 +10,20 @@
 # def start_session_timer(task_id, current_progress, total_hours):
 #     # (100% / (total_hours * 60 minutes))
 #     percent_per_minute = 100 / (total_hours * 60)
-    
+
 #     status_text = st.empty()
 #     bar = st.progress(current_progress / 100)
-    
+
 #     if st.button("Stop Timer", key=f"stop_{task_id}"):
 #         st.rerun()
 
 #     while current_progress < 100:
 #         time.sleep(60) # Wait 1 minute
 #         current_progress += percent_per_minute
-        
+
 #         # Update Database
 #         supabase.table("Tasks").update({"completed": min(100, current_progress)}).eq("id", task_id).execute()
-        
+
 #         # Update UI
 #         status_text.write(f"Focusing... {round(current_progress, 1)}% Complete")
 #         bar.progress(min(1.0, current_progress / 100))
@@ -40,7 +40,7 @@
 #   today_index = datetime.now().weekday()
 #   # Create the tabs
 #   tabs = st.tabs(DAYS_ORDER)
-  
+
 #   for i, day in enumerate(DAYS_ORDER):
 #     with tabs[i]:
 #       header_text = f"### {day}"
@@ -55,10 +55,10 @@
 #           # Logic to highlight if a deadline is close
 #           deadline_dt = datetime.fromisoformat(s["deadline"])
 #           is_due_soon = (deadline_dt.date() == datetime.now().date())
-          
+
 #           with st.container(border=True):
 #             col1, col2 = st.columns([3, 1])
-            
+
 #             with col1:
 #               title = f"**{s['subject']}**"
 #               if is_due_soon:
@@ -66,7 +66,7 @@
 #               st.markdown(title)
 #               st.caption(f"Duration: {s['hours']}h | Difficulty: {s['difficulty']}/5")
 #               st.progress(s['completed'] / 100)
-            
+
 #             with col2:
 #               # Unique keys are vital in Streamlit loops
 #               u_key = f"{day}_{s['id']}"
