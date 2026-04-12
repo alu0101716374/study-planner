@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 from lib.auth import logout, get_profile, get_user
 from typing import Optional, Any, Tuple
 
@@ -47,9 +48,6 @@ def render_sidebar():
         else:
             st.info("Not logged in")
 
-            if st.button("Log In / Sign Up"):
-                st.switch_page("pages/login.py")
-
 
 def show_pages():
     """
@@ -63,11 +61,25 @@ def show_pages():
     schedule_page = st.Page("pages/schedule.py", title="Schedule")
 
     user = handle_result(get_user())
+    st.set_page_config(
+        page_title="Smart Study Planner",
+        layout="wide"
+    )
 
     if user:
         pages = [dashboard_page, schedule_page, tasks_page, availability_page]
+        
     else:
         pages = [landing_page, login_page]
 
     pg = st.navigation(pages)
     pg.run()
+
+
+def load_css():
+    """
+    Loads a CSS file from the static/css directory and injects it into the Streamlit app.
+    """
+    with open("static/css/styles.css") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
