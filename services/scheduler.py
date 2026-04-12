@@ -61,16 +61,14 @@ def violates_constraints(
 
 def generate_schedule(
     tasks_data: List[Dict], availability: Dict[str, Any]
-) -> Dict[str, List[Dict]]:
+) -> Dict[str, List[StudySession]]:
     """The main orchestration engine."""
-    tasks = [Task.from_dict(t) for t in tasks_data]
-
+    tasks = tasks_data
     sessions = split_tasks_into_sessions(tasks)
     for s in sessions:
         s.calculate_priority()
 
     sessions.sort(key=lambda s: s.priority, reverse=True)
-
     schedule: Dict[str, List[StudySession]] = {day: [] for day in DAYS_ORDER}
 
     for day in DAYS_ORDER:
@@ -81,7 +79,6 @@ def generate_schedule(
             for session in sessions:
                 if session.is_assigned:
                     continue
-
                 if not violates_constraints(session, day, schedule):
                     if session.hours <= available_hours:
                         session.is_assigned = True
@@ -89,7 +86,6 @@ def generate_schedule(
                         available_hours -= session.hours
                         found_fit = True
                         break
-
             if not found_fit:
                 break
 
@@ -109,10 +105,10 @@ def generate_schedule(
                     schedule[day].append(session)
                     remaining_slots -= session.hours
 
-    return clean_for_ui(schedule)
+    return schedule
 
 
-def clean_for_ui(schedule: Dict[str, List[StudySession]]) -> Dict[str, List[Dict]]:
+def clean_for_ui(schedule: Dict[str, List[StudySession]]) -> Dict[str, List[StudySession]]:
     """Final pass to merge sessions of the same subject for UI display."""
     ui_schedule = {}
     for day, sessions in schedule.items():
@@ -121,11 +117,12 @@ def clean_for_ui(schedule: Dict[str, List[StudySession]]) -> Dict[str, List[Dict
             if s.subject in merged:
                 merged[s.subject]["hours"] += s.hours
             else:
-                merged[s.subject] = {
-                    "subject": s.subject,
-                    "hours": s.hours,
-                    "deadline": str(s.deadline),
-                    "difficulty": s.difficulty,
-                }
+                merged[s.subject] = StudySession(
+                    task_id=s.task_id,
+                    subject=s.subject,
+                    hours=s.hours,
+                    deadline=s.deadline,
+                    difficulty=s.difficulty,
+                )
         ui_schedule[day] = list(merged.values())
     return ui_schedule

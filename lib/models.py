@@ -138,3 +138,4 @@ class StudySession:
             + (self.WORK_WEIGHT * remaining_work)
             + (self.DIFFICULTY_WEIGHT * self.difficulty)
         )
+

@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime, timedelta, timezone
-from lib.models import Task, StudySession
+from lib.models import Task, StudySession, ScheduleItem
 from services.scheduler import get_slot_date, split_tasks_into_sessions, violates_constraints, generate_schedule, clean_for_ui, DAYS_ORDER
 
 
@@ -88,14 +88,14 @@ def test_clean_for_ui_merges_same_subject_sessions():
         "tuesday": []
     }
     merged = clean_for_ui(schedule)
-    assert merged["monday"][0]["hours"] == pytest.approx(1.5)
-    assert merged["monday"][0]["subject"] == "Math"
+    assert merged["monday"][0].hours == pytest.approx(1.5)
+    assert merged["monday"][0].subject == "Math"
 
 
 def test_generate_schedule_respects_availability_and_fallback():
     future_deadline_1 = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
     future_deadline_2 = (datetime.now(timezone.utc) + timedelta(days=31)).isoformat()
-    tasks_data = [
+    tasks_dicts = [
         {
             "id": 1,
             "user_id": "user123",
@@ -119,9 +119,11 @@ def test_generate_schedule_respects_availability_and_fallback():
             "description": "Essay"
         }
     ]
+    tasks_data = [Task.from_dict(task_dict) for task_dict in tasks_dicts]
     availability = {day: {"hours": 1} for day in DAYS_ORDER}
 
     schedule = generate_schedule(tasks_data, availability)
     assert isinstance(schedule, dict)
     assert all(isinstance(schedule[day], list) for day in DAYS_ORDER)
-    assert sum(item["hours"] for day in DAYS_ORDER for item in schedule[day]) == pytest.approx(4.0)
+    assert all(isinstance(item, ScheduleItem) for day in DAYS_ORDER for item in schedule[day])
+    assert sum(item.hours for day in DAYS_ORDER for item in schedule[day]) == pytest.approx(4.0)
