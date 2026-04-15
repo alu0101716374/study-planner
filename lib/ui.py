@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 from lib.auth import logout, get_profile, get_user
 from typing import Optional, Any, Tuple
 
@@ -61,14 +60,12 @@ def show_pages():
     schedule_page = st.Page("pages/schedule.py", title="Schedule")
 
     user = handle_result(get_user())
-    st.set_page_config(
-        page_title="Smart Study Planner",
-        layout="wide"
-    )
+    
+    st.set_page_config(page_title="Smart Study Planner", layout="wide", initial_sidebar_state="expanded")
 
     if user:
         pages = [dashboard_page, schedule_page, tasks_page, availability_page]
-        
+
     else:
         pages = [landing_page, login_page]
 
@@ -82,4 +79,3 @@ def load_css():
     """
     with open("static/css/styles.css") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-

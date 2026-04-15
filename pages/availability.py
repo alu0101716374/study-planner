@@ -1,6 +1,6 @@
 import streamlit as st
 from lib.auth import get_user
-from lib.ui import handle_result
+from lib.ui import handle_result, render_sidebar
 
 AVAILABILITY_PREF_OPTIONS = ["No Preference", "Morning", "Afternoon", "Evening"]
 
@@ -24,7 +24,6 @@ def render_availability_ui():
     weekly_data = {}
     for day in days:
         default_hours = loaded_availability.get(day, {}).get("hours")
-        # Ensure default preference string is normalized for comparison
         default_pref_str = loaded_availability.get(day, {}).get(
             "preference", AVAILABILITY_PREF_OPTIONS[0]
         )
@@ -89,6 +88,7 @@ def render_availability_ui():
 
 
 def main():
+    render_sidebar()
     st.title("Your Weekly Availability")
     if "reload_availability" not in st.session_state:
         st.session_state.reload_availability = True

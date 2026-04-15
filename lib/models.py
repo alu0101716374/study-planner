@@ -30,6 +30,13 @@ class Task:
         if self.completed_percent < 0 or self.completed_percent > 100:
             logger.error("Task completed_percent must be between 0 and 100")
             raise ValueError("Task completed_percent must be between 0 and 100")
+        if self.id is None and self.deadline:
+            if self.deadline < datetime.now(timezone.utc):
+                raise ValueError("Task deadline is in the past")
+
+    @property
+    def total_hours_studied(self) -> float:
+        return (self.completed_percent / 100) * self.hours
 
     @classmethod
     def from_dict(cls, data: dict) -> "Task":
@@ -39,6 +46,9 @@ class Task:
         if isinstance(raw_deadline, str):
             try:
                 parsed_deadline = datetime.fromisoformat(raw_deadline)
+
+                if parsed_deadline.tzinfo is None:
+                    parsed_deadline = parsed_deadline.replace(tzinfo=timezone.utc)
             except ValueError as e:
                 logger.error(
                     f"Warning: Could not parse deadline '{raw_deadline}' as ISO datetime: {e}"
@@ -81,7 +91,13 @@ class Task:
         }
 
     def remaining_hours(self) -> float:
-        return (100 - self.completed_percent) / 100 * self.hours
+        return self.hours - self.total_hours_studied
+
+    def mark_session_complete(self, session_hours: float) -> None:
+        current_studied_hours = self.total_hours_studied
+        updated_studied_hours = current_studied_hours + session_hours
+        self.completed_percent = min(100, int((updated_studied_hours / self.hours) * 100))
+        logger.info(f"Task '{self.title}' updated: {self.completed_percent}% completed, {updated_studied_hours} hours studied")
 
 
 @dataclass
@@ -90,12 +106,14 @@ class StudySession:
     WORK_WEIGHT = 0.3
     DIFFICULTY_WEIGHT = 0.2
 
+    title: str
     task_id: Optional[int]
     subject: str
     hours: float
     deadline: date
     difficulty: int
-    completed_percent: int
+    completed_percent: int = 0
+    description: Optional[str] = None
     priority: float = field(init=False, default=0.0)
     is_assigned: bool = field(default=False)
 
@@ -109,12 +127,14 @@ class StudySession:
             raise ValueError("Cannot create StudySession from a Task with no deadline.")
 
         return cls(
+            title=task.title,
             task_id=task.id,
             subject=task.subject,
             hours=hours,
             deadline=task.deadline.date(),
             difficulty=task.difficulty,
             completed_percent=task.completed_percent,
+            description=task.description
         )
 
     def is_due_after(self, target_date: date) -> bool:
@@ -138,4 +158,3 @@ class StudySession:
             + (self.WORK_WEIGHT * remaining_work)
             + (self.DIFFICULTY_WEIGHT * self.difficulty)
         )
-

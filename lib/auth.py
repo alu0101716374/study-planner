@@ -15,6 +15,8 @@ def init_session():
         st.session_state.profile = None
     if "repository" not in st.session_state:
         st.session_state.repository = StudyPlannerRepository(supabase_client=supabase)
+    if "schedule" not in st.session_state:
+        st.session_state.schedule = None
 
 
 def get_user() -> tuple[bool, Optional[Any]]:

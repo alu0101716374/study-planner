@@ -1,114 +1,48 @@
-/* Modern Clean Study Planner Styles */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-html, body, [class*="st-"] {
-    font-family: 'Inter', system-ui, sans-serif;
+:root {
+    --primary: #0ea5e9;
+    --primary-dark: #0284c8;
+    --text: #1e2937;
+    --light-text: #64748b;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --border: #e2e8f0;
 }
-
-#MainMenu, footer, header {
-    visibility: hidden;
-}
-
-#hero-container {
-    text-align: center;
-    padding: 4rem 1rem 2.5rem;
-}
-
-#hero-container h1 {
-    font-size: 2.9rem;
-    font-weight: 700;
-    color: #1e2937;
-    margin-bottom: 0.6rem;
-    line-height: 1.05;
-}
-
-#hero-container p {
-    font-size: 1.25rem;
-    color: #475569;
-    max-width: 620px;
-    margin: 0 auto 2rem;
-}
-
-#hero-container .stButton>button {
-    background-color: #ef4444;
-    color: white;
-    font-weight: 600;
-    font-size: 1.05rem;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    border: none;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    transition: all 0.3s ease;
-}
-
-#hero-container .stButton>button:hover {
-    background-color: #dc2626;
-    transform: translateY(-2px);
-}
-
-/* Feature Cards - Light & Clean */
 .feature-card {
-    background-color: #ffffff;
-    padding: 1.8rem 1.6rem;
+    padding: 1.5rem;
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    height: 100%;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    transition: all 0.25s ease;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    transition: all 0.2s ease;
 }
 
 .feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    border-color: #60a5fa;
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+    border-color: var(--primary);
 }
-
 .feature-card h3 {
-    color: #1e40af;
+    margin: 0 0 0.75rem 0;
+    color: var(--text);
     font-size: 1.35rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
 }
 
-.feature-card p {
-    color: #475569;
-    line-height: 1.65;
-}
-
-/* Logic Section */
-#logic-section {
-    background-color: #f8fafc;
-    padding: 2.5rem;
-    border-radius: 16px;
-    margin: 2rem 0;
-}
-
-#logic-section h2 {
-    color: #1e2937;
-}
-
-.stInfo {
-    background-color: #dbeafe;
-    border: none;
-    border-radius: 12px;
-}
-
-/* Footer */
-#footer-container .stButton>button {
-    background-color: #1f2937;
-    color: white;
-    font-weight: 600;
+/* Buttons */
+.stButton > button {
     border-radius: 8px;
+    font-weight: 600;
     padding: 0.75rem 2rem;
-    border: none;
 }
 
-#footer-container .stButton>button:hover {
-    background-color: #111827;
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
-/* General */
-.stDivider {
-    margin: 3rem 0 2.5rem;
+/* Quick fixes */
+h1, h2, h3 {
+    font-weight: 600;
+}
+
+.stApp {
+    background-color: var(--bg);
 }

@@ -3,6 +3,8 @@ from lib.ui import render_sidebar, handle_result
 from lib.auth import get_user
 from services.task_service import TaskService
 
+from lib.state_manager import update_schedule
+
 # Instantiate service with repository
 task_service = TaskService(st.session_state.repository)
 
@@ -29,6 +31,7 @@ def add_task_ui():
         handle_result(
             task_service.add_task(task_data, st.session_state.repository), display_success=True
         )
+        update_schedule()
 
 
 def main():

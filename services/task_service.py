@@ -1,7 +1,7 @@
 from lib.models import Task
 from lib.repository import StudyPlannerRepository  # type: ignore
 from lib.logger import logger
-from typing import Tuple
+from typing import Tuple, Optional
 
 
 class TaskService:
@@ -25,3 +25,20 @@ class TaskService:
         except Exception as e:
             logger.error(f"Unexpected error adding task: {e}")
             return False, "An unexpected error occurred. Please try again."
+
+    def mark_session_complete(self, task_id: int, session_hours: float) -> Tuple[bool, str]:
+        try:
+            task = self.repository.get_task_by_id(task_id)
+            if task is None:
+                return False, f"Task with ID {task_id} not found."
+
+            task.mark_session_complete(session_hours)
+            updated_task = self.repository.update_task(task)
+
+            if updated_task is None:
+                return False, f"Failed to update task {task_id} in the repository."
+
+            return True, f"Task '{task.title}' updated to {task.completed_percent}% complete."
+        except Exception as e:
+            logger.error(f"Error marking session complete for task {task_id}: {e}")
+            return False, f"Error marking session complete: {e}"

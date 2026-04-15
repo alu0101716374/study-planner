@@ -8,7 +8,7 @@ DAYS_ORDER = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"
 def get_slot_date(day_name: str) -> date:
     """Calculates the specific calendar date for a day of the week."""
     today = datetime.now(timezone.utc).date()
-    today_idx = today.weekday()  # Monday = 0
+    today_idx = today.weekday() 
     target_idx = DAYS_ORDER.index(day_name)
 
     day_diff = target_idx - today_idx
@@ -60,7 +60,7 @@ def violates_constraints(
 
 
 def generate_schedule(
-    tasks_data: List[Dict], availability: Dict[str, Any]
+    tasks_data: List[Task], availability: Dict[str, Any]
 ) -> Dict[str, List[StudySession]]:
     """The main orchestration engine."""
     tasks = tasks_data
@@ -109,20 +109,26 @@ def generate_schedule(
 
 
 def clean_for_ui(schedule: Dict[str, List[StudySession]]) -> Dict[str, List[StudySession]]:
-    """Final pass to merge sessions of the same subject for UI display."""
     ui_schedule = {}
+
     for day, sessions in schedule.items():
-        merged: Dict[str, Dict] = {}
+        merged: Dict[str, StudySession] = {}
+
         for s in sessions:
-            if s.subject in merged:
-                merged[s.subject]["hours"] += s.hours
+            key = s.task_id
+
+            if key in merged:
+                merged[key].hours += s.hours
             else:
-                merged[s.subject] = StudySession(
+                merged[key] = StudySession(
                     task_id=s.task_id,
                     subject=s.subject,
                     hours=s.hours,
                     deadline=s.deadline,
                     difficulty=s.difficulty,
+                    completed_percent=s.completed_percent,
                 )
+
         ui_schedule[day] = list(merged.values())
+
     return ui_schedule

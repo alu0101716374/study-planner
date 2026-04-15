@@ -1,40 +1,86 @@
 import streamlit as st
+from datetime import datetime
 from lib.ui import render_sidebar, handle_result
-from lib.auth import get_user
-from services.schedule_service import load_schedule
+from lib.state_manager import get_schedule, get_task_service 
+
+WEEKDAYS = [
+    "monday", "tuesday", "wednesday", "thursday",
+    "friday", "saturday", "sunday"
+]
+
+def format_date(date_obj):
+    return date_obj.strftime("%d %b %Y")
+
+def render_session(session):
+    progress = int(session.completed_percent)
+    task_service = get_task_service() # Get the task service
+
+    difficulty_icons = "🔹" * session.difficulty
+
+    with st.container():
+        st.markdown(
+            f"""
+            <div style="
+                padding: 12px;
+                border-radius: 10px;
+                border: 1px solid #ddd;
+                margin-bottom: 10px;
+            ">
+                <h4 style="margin-bottom: 5px;">{session.title}</h4>
+                <p style="margin: 0;"><b>📘 Subject:</b> {session.subject}</p>
+                <p style="margin: 0;"><b>⏱ Hours:</b> {session.hours}</p>
+                <p style="margin: 0;"><b>📅 Deadline:</b> {session.deadline}</p>
+                <p style="margin: 0;"><b>⚡ Difficulty:</b> {difficulty_icons}</p>
+                <p style="margin: 0;"><b>ID:</b> {session.task_id}</p>
+                <p style="margin: 0;"><b>📝 Description:</b> {session.description}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        st.progress(progress / 100)
+        st.caption(f"{progress}% completed")
+
+        if st.button(f"Mark as Complete", key=f"complete_session_{session.task_id}"):
+            if session.task_id is not None:
+                success, message = handle_result(task_service.mark_session_complete(session.task_id, session.hours))
+                if success:
+                    st.rerun()
+            else:
+                st.error("Cannot mark session complete: Task ID is missing.")
+
+        st.divider()
 
 def display_schedule():
-    st.title("Your Schedule")
+    st.title("📅 Your Schedule")
 
-    user = handle_result(get_user())
-    schedule = handle_result(load_schedule(user.id))
+    success, schedule = get_schedule()
 
-    if not schedule:
-        st.info("No schedule available. Please add some tasks and set your availability.")
+    if not success:
+        st.info("No schedule available.")
         return
 
-    # Create tabs for each day
-    days = list(schedule.keys())
-    tabs = st.tabs(days)
+    today_index = datetime.today().weekday()
+    ordered_days = WEEKDAYS[today_index:] + WEEKDAYS[:today_index]
 
-    for i, day in enumerate(days):
+    tabs = st.tabs([day.capitalize() for day in ordered_days])
+
+    for i, day in enumerate(ordered_days):
         with tabs[i]:
-            sessions = schedule[day]
+            sessions = schedule.get(day, [])
 
             if not sessions:
                 st.info("No sessions for this day.")
                 continue
 
             for session in sessions:
-                with st.container():
-                    st.markdown(f"###  {session.subject}")
-                    st.write(f"**Hours needed:** {session.hours}")
-                    st.write(f"**Deadline:** {session.deadline}")
-                    st.write(f"**Difficulty:** {session.difficulty}")
-                    st.divider()
+                render_session(session)
+
+
 def main():
-        render_sidebar()
-        display_schedule()
+    render_sidebar()
+    display_schedule()
+
 
 if __name__ == "__main__":
     main()

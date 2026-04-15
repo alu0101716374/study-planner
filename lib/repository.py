@@ -16,6 +16,16 @@ class StudyPlannerRepository:
             logger.error(f"Error fetching tasks for user {user_id}: {e}")
             return []
 
+    def get_task_by_id(self, task_id: int) -> Optional[Task]:
+        try:
+            res = self._supabase.table("tasks").select("*").eq("id", task_id).single().execute()
+            if res and res.data:
+                return Task.from_dict(res.data)
+            return None
+        except Exception as e:
+            logger.error(f"Error fetching task {task_id}: {e}")
+            return None
+
     def add_task(self, task: Task) -> Optional[Task]:
         try:
             task_dict = task.to_dict()
