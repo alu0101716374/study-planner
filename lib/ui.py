@@ -58,13 +58,14 @@ def show_pages():
     tasks_page = st.Page("pages/tasks.py", title="Tasks")
     availability_page = st.Page("pages/availability.py", title="Availability")
     schedule_page = st.Page("pages/schedule.py", title="Schedule")
+    settings_page = st.Page("pages/settings.py", title="Settings")
 
     user = handle_result(get_user())
     
     st.set_page_config(page_title="Smart Study Planner", layout="wide", initial_sidebar_state="expanded")
 
     if user:
-        pages = [dashboard_page, schedule_page, tasks_page, availability_page]
+        pages = [dashboard_page, schedule_page, tasks_page, availability_page, settings_page]
 
     else:
         pages = [landing_page, login_page]

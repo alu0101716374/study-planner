@@ -84,3 +84,15 @@ class StudyPlannerRepository:
             ).execute()
         except Exception as e:
             logger.error(f"Error updating availability for {user_id}: {e}")
+
+    def delete_self(self) -> bool:
+        try:
+            logger.info("User requesting self-deletion via RPC")
+            # .rpc() calls the SQL function we just created
+            self._supabase.rpc("delete_user").execute()
+            
+            logger.info("Account wiped successfully")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to delete account: {e}")
+            return False
