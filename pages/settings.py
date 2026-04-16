@@ -32,7 +32,6 @@ def main():
     render_sidebar()
     st.title("Settings")
     st.subheader("Danger Zone")
-
     if st.button("Delete My Account", type="secondary"):
         confirm_delete_dialog()
 

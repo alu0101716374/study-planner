@@ -1,22 +1,8 @@
 import streamlit as st
 from lib.supabase_client import supabase
-from lib.repository import StudyPlannerRepository
 from lib.logger import logger
 from typing import Tuple, Union, Optional, Any
 
-
-def init_session():
-    """
-    initializes all necessasy st.session_states
-    """
-    if "user" not in st.session_state:
-        st.session_state.user = None
-    if "profile" not in st.session_state:
-        st.session_state.profile = None
-    if "repository" not in st.session_state:
-        st.session_state.repository = StudyPlannerRepository(supabase_client=supabase)
-    if "schedule" not in st.session_state:
-        st.session_state.schedule = None
 
 
 def get_user() -> tuple[bool, Optional[Any]]:
@@ -38,9 +24,9 @@ def get_profile() -> Tuple[bool, Union[dict, str]]:
     if st.session_state.user:
         try:
             res = (
-                supabase.table("profiles")  # type: ignore
+                supabase.table("profiles")  
                 .select("*")
-                .eq("id", st.session_state.user.id)  # type: ignore
+                .eq("id", st.session_state.user.id)  
                 .single()
                 .execute()
             )
