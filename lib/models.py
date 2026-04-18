@@ -97,7 +97,9 @@ class Task:
         current_studied_hours = self.total_hours_studied
         updated_studied_hours = current_studied_hours + session_hours
         self.completed_percent = min(100, int((updated_studied_hours / self.hours) * 100))
-        logger.info(f"Task '{self.title}' updated: {self.completed_percent}% completed, {updated_studied_hours} hours studied")
+        logger.info(
+            f"Task '{self.title}' updated: {self.completed_percent}% completed, {updated_studied_hours} hours studied"
+        )
 
 
 @dataclass
@@ -113,9 +115,11 @@ class StudySession:
     deadline: date
     difficulty: int
     completed_percent: int = 0
+    is_completed: bool = False
     description: Optional[str] = None
     priority: float = field(init=False, default=0.0)
     is_assigned: bool = field(default=False)
+    id: Optional[int] = None
 
     @classmethod
     def from_task(cls, task: Task, hours: float) -> "StudySession":
@@ -134,7 +138,25 @@ class StudySession:
             deadline=task.deadline.date(),
             difficulty=task.difficulty,
             completed_percent=task.completed_percent,
-            description=task.description
+            description=task.description,
+        )
+
+    def from_db(cls, data: dict) -> "StudySession":
+        """Maps Supabase dictionary keys to StudySession attributes."""
+        raw_deadline = data.get("deadline")
+        parsed_deadline = raw_deadline
+        if isinstance(raw_deadline, str):
+            parsed_deadline = datetime.fromisoformat(raw_deadline).date()
+
+        return cls(
+            id=data.get("id"),
+            task_id=data.get("task_id"),
+            subject=data.get("subject", "Unknown"),
+            hours=float(data.get("hours_allocated", 0)),
+            deadline=parsed_deadline,
+            difficulty=data.get("difficulty", 3),
+            is_completed=data.get("is_completed", False),
+            title=data.get("title", "Study Session"),
         )
 
     def is_due_after(self, target_date: date) -> bool:

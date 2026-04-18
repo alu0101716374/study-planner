@@ -4,6 +4,7 @@ from lib.ui import render_sidebar, handle_result
 
 profile = handle_result(get_profile())
 
+
 @st.dialog("⚠️ Delete Account Forever")
 def confirm_delete_dialog():
     st.write(f"""
@@ -11,21 +12,20 @@ def confirm_delete_dialog():
         This action is **permanent** and will:
     """)
     st.markdown("- Delete all data associated to the account")
-    
+
     st.warning("This cannot be undone.", icon="🚨")
 
     col1, col2 = st.columns(2)
-    
+
     with col1:
         if st.button("Cancel", use_container_width=True):
-            st.rerun() 
-            
+            st.rerun()
+
     with col2:
         if st.button("Delete Forever", type="primary", use_container_width=True):
             st.session_state.repository.delete_self()
             st.success("Account deleted.")
             logout()
-
 
 
 def main():
@@ -34,6 +34,7 @@ def main():
     st.subheader("Danger Zone")
     if st.button("Delete My Account", type="secondary"):
         confirm_delete_dialog()
+
 
 if __name__ == "__main__":
     main()

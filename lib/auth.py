@@ -4,7 +4,6 @@ from lib.logger import logger
 from typing import Tuple, Union, Optional, Any
 
 
-
 def get_user() -> tuple[bool, Optional[Any]]:
     """
     Returns a bool of succes and current user(dict including id, email), or None if not logged in
@@ -24,9 +23,9 @@ def get_profile() -> Tuple[bool, Union[dict, str]]:
     if st.session_state.user:
         try:
             res = (
-                supabase.table("profiles")  
+                supabase.table("profiles")
                 .select("*")
-                .eq("id", st.session_state.user.id)  
+                .eq("id", st.session_state.user.id)
                 .single()
                 .execute()
             )
